@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-white rounded-3xl shadow-2xl max-w-7xl mx-auto overflow-hidden mb-8">
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-br from-primary via-primary-dark to-[#764ba2] text-white p-16 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="relative z-10">
+            <h1 class="text-6xl md:text-7xl font-extrabold mb-6 tracking-tight">
+                Your Career Journey,<br>
+                <span class="bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">Simplified & Supported</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
+                AI-powered job matching meets mental wellness support. 
+                Find your dream job while staying mentally healthy.
+            </p>
+            <div class="flex gap-4 justify-center flex-wrap mt-10">
+                <a href="/register" class="bg-white text-primary px-10 py-4 rounded-xl font-bold text-lg shadow-2xl hover:shadow-3xl hover:-translate-y-1 hover:scale-105 transition-all duration-300 no-underline transform">
+                    🚀 Get Started Free
+                </a>
+                <a href="/wellness" class="bg-white/20 backdrop-blur-sm border-2 border-white/30 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white/30 transition-all duration-300 no-underline">
+                    🧘 Check Your Wellness
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="p-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl border-2 border-blue-200 text-center transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                <div class="text-5xl mb-3">📊</div>
+                <span class="text-4xl font-extrabold text-primary block mb-2">50,000+</span>
+                <span class="text-sm text-gray-700 font-semibold uppercase tracking-wide">Active Job Listings</span>
+                <p class="text-xs text-gray-600 mt-2">Updated daily from top platforms</p>
+            </div>
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl border-2 border-purple-200 text-center transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                <div class="text-5xl mb-3">🎯</div>
+                <span class="text-4xl font-extrabold text-primary-dark block mb-2">94.2%</span>
+                <span class="text-sm text-gray-700 font-semibold uppercase tracking-wide">Match Accuracy</span>
+                <p class="text-xs text-gray-600 mt-2">AI-powered precision matching</p>
+            </div>
+            <div class="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl border-2 border-green-200 text-center transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                <div class="text-5xl mb-3">🔓</div>
+                <span class="text-2xl font-extrabold text-wellness block mb-2">Open Source</span>
+                <span class="text-sm text-gray-700 font-semibold uppercase tracking-wide">System</span>
+                <p class="text-xs text-gray-600 mt-2">Transparent & community-driven</p>
+            </div>
+            <div class="bg-gradient-to-br from-pink-50 to-pink-100 p-8 rounded-2xl border-2 border-pink-200 text-center transform hover:scale-105 transition-all duration-300 hover:shadow-xl">
+                <div class="text-5xl mb-3">🧘</div>
+                <span class="text-4xl font-extrabold text-primary block mb-2">24/7</span>
+                <span class="text-sm text-gray-700 font-semibold uppercase tracking-wide">Wellness Support</span>
+                <p class="text-xs text-gray-600 mt-2">Always here for your mental health</p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="mb-12">
+            <h2 class="text-4xl font-bold text-center mb-12 text-gray-800">
+                Why Choose <span class="text-primary">SymbiONE</span>?
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl border-2 border-gray-200 hover:border-primary transition-all duration-300 hover:shadow-2xl group">
+                    <div class="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">🎯</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Smart Job Matching</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Our advanced AI analyzes your skills, experience, and resume to find perfect matches. 
+                        Get detailed breakdowns of why each job fits you.
+                    </p>
+                    <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Multi-factor scoring algorithm
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Resume similarity matching
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Real-time job updates
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl border-2 border-gray-200 hover:border-wellness transition-all duration-300 hover:shadow-2xl group">
+                    <div class="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">🧘</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Mental Wellness Focus</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Job searching is stressful. We monitor your mental health and provide personalized 
+                        wellness recommendations throughout your journey.
+                    </p>
+                    <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> AI-powered stress detection
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Personalized wellness tips
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Voice & text check-ins
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl border-2 border-gray-200 hover:border-primary-dark transition-all duration-300 hover:shadow-2xl group">
+                    <div class="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">💬</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">AI Career Assistant</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Have natural voice conversations with our AI assistant. Get career advice, 
+                        interview tips, and support whenever you need it.
+                    </p>
+                    <ul class="mt-4 space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Voice-only conversations
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Real-time streaming responses
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-wellness">✓</span> Context-aware guidance
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="bg-gradient-to-r from-primary/10 via-primary-dark/10 to-primary/10 p-12 rounded-3xl text-center border-2 border-primary/20">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                Ready to Transform Your Career Journey?
+            </h2>
+            <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                Join thousands of job seekers who found their dream jobs while maintaining 
+                their mental wellbeing with SymbiONE.
+            </p>
+            <div class="flex gap-5 justify-center flex-wrap">
+                <a href="/register" class="bg-gradient-to-r from-primary to-primary-dark text-white px-12 py-5 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-105 transition-all duration-300 no-underline transform">
+                    🎯 Start Job Search
+                </a>
+                <a href="/wellness" class="bg-gradient-to-r from-wellness to-[#45a049] text-white px-12 py-5 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-105 transition-all duration-300 no-underline transform">
+                    💚 Check Wellness
+                </a>
+                <a href="/conversation" class="bg-gradient-to-r from-primary-dark to-[#9c27b0] text-white px-12 py-5 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-105 transition-all duration-300 no-underline transform">
+                    💬 Talk to AI
+                </a>
+            </div>
+            <p class="mt-6 text-sm text-gray-500">
+                ✨ Free forever • No credit card required • Privacy-first approach
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

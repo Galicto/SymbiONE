@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Your Wellness Report{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-2xl max-w-5xl mx-auto overflow-hidden">
+    <!-- Header Section -->
+    <div class="bg-gradient-to-r from-wellness via-[#45a049] to-wellness text-white p-12 text-center">
+        <h1 class="text-5xl font-extrabold mb-4 tracking-tight">🌟 Your Wellness Report</h1>
+        <p class="text-xl text-white/90 mb-4">Based on your responses, here's what we found:</p>
+    </div>
+    
+    <!-- Content Section -->
+    <div class="p-12">
+    
+    {% if analysis %}
+        <!-- Wellness Score -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 my-8">
+            <div class="bg-gradient-to-br from-primary/10 to-primary-dark/10 p-6 rounded-2xl border-2 border-primary/20 text-center md:col-span-2">
+                <span class="text-5xl font-bold block mb-2" style="color: {% if analysis.stress_level < 30 %}#4caf50{% elif analysis.stress_level < 70 %}#ff9800{% else %}#f44336{% endif %};">
+                    {{ analysis.stress_level }}
+                </span>
+                <span class="text-sm text-gray-600 uppercase tracking-wide block mb-3">Stress Level (0-100)</span>
+                <p class="mt-2.5 text-lg font-semibold text-gray-800">
+                    {{ analysis.wellness_category }}
+                </p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-primary/10 to-primary-dark/10 p-6 rounded-2xl border-2 border-primary/20 text-center">
+                <span class="text-5xl font-bold text-primary block mb-2">{{ "%.2f"|format(analysis.sentiment_score) }}</span>
+                <span class="text-sm text-gray-600 uppercase tracking-wide block mb-2">Sentiment Score</span>
+                <small class="text-gray-500">(-1 to +1)</small>
+            </div>
+        </div>
+
+        <!-- Indicators -->
+        <h2 class="text-primary-dark text-3xl font-semibold my-8">📊 What We Noticed</h2>
+        <div class="bg-gray-50 p-5 rounded-2xl mb-8">
+            <ul class="list-none p-0 space-y-0">
+                {% for indicator in analysis.indicators %}
+                <li class="py-2.5 border-b border-gray-300 last:border-b-0">
+                    ⚠️ {{ indicator }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Suggestions -->
+        <h2 class="text-primary-dark text-3xl font-semibold my-8">💡 Wellness Recommendations</h2>
+        <div class="bg-gradient-to-r from-primary/10 to-primary-dark/10 p-5 rounded-2xl mb-8">
+            <ul class="list-none p-0 space-y-0">
+                {% for suggestion in analysis.suggestions %}
+                <li class="py-2.5 border-b border-primary/20 last:border-b-0">
+                    ✨ {{ suggestion }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Adjusted Job Recommendations -->
+        <h2 class="text-primary-dark text-3xl font-semibold my-8">🎯 Personalized Actions</h2>
+        <div class="bg-white border-2 border-primary p-6 rounded-2xl">
+            {% if analysis.stress_level > 60 %}
+                <h3 class="text-red-500 text-xl font-semibold mt-0 mb-4">High Stress Detected</h3>
+                <p class="mb-4 text-gray-700">We recommend taking a break before continuing your job search. Consider:</p>
+                <ul class="list-disc pl-6 mb-5 space-y-2 text-gray-700">
+                    <li>Taking a 15-minute walk or meditation break</li>
+                    <li>Talking to a friend or counselor</li>
+                    <li>Revisiting your search with filters for remote or flexible roles</li>
+                </ul>
+                <a href="/wellness" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 mt-5">
+                    Check In Again Later
+                </a>
+            {% elif analysis.stress_level > 40 %}
+                <h3 class="text-orange-500 text-xl font-semibold mt-0 mb-4">Moderate Stress</h3>
+                <p class="mb-4 text-gray-700">You're managing, but let's make your search easier:</p>
+                <ul class="list-disc pl-6 mb-5 space-y-2 text-gray-700">
+                    <li>We'll prioritize jobs with better work-life balance</li>
+                    <li>Consider setting daily application limits</li>
+                    <li>Take regular breaks between applications</li>
+                </ul>
+                <a href="/recommendations" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 mt-5">
+                    View Wellness-Optimized Jobs
+                </a>
+            {% else %}
+                <h3 class="text-wellness text-xl font-semibold mt-0 mb-4">Great Mental State!</h3>
+                <p class="mb-4 text-gray-700">You're in a healthy space. Keep it up with these tips:</p>
+                <ul class="list-disc pl-6 mb-5 space-y-2 text-gray-700">
+                    <li>Maintain your current self-care routine</li>
+                    <li>Continue your focused job search</li>
+                    <li>Celebrate small wins along the way</li>
+                </ul>
+                <a href="/recommendations" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 mt-5">
+                    Continue Job Search
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="/" class="text-primary no-underline hover:underline font-semibold">← Back to Home</a>
+        </div>
+
+    {% else %}
+        <p class="mb-5 text-gray-700">No wellness data available. Please complete the check-in first.</p>
+        <a href="/wellness" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+            Start Wellness Check-In
+        </a>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

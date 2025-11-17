@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Wellness Check-In{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-2xl max-w-4xl mx-auto overflow-hidden">
+    <!-- Header Section -->
+    <div class="bg-gradient-to-r from-wellness via-[#45a049] to-wellness text-white p-12 text-center">
+        <h1 class="text-5xl font-extrabold mb-4 tracking-tight text-white">🧘 Wellness Check-In</h1>
+        <p class="text-xl text-white/90 mb-2 max-w-2xl mx-auto">Job searching can be stressful. Let's check in on how you're feeling.</p>
+        <p class="text-white/80 text-sm mb-4 italic">
+            Your responses are analyzed locally and never stored.
+        </p>
+    </div>
+    
+    <!-- Content Section -->
+    <div class="p-12">
+    
+    <!-- Mode Selection -->
+    <div class="flex gap-4 mb-8 justify-center">
+        <button onclick="showMode('text')" id="textBtn" class="px-8 py-3 border-2 border-primary bg-white text-primary rounded-xl cursor-pointer text-base font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md active">
+            ✍️ Text Mode
+        </button>
+        <button onclick="showMode('voice')" id="voiceBtn" class="px-8 py-3 border-2 border-primary bg-white text-primary rounded-xl cursor-pointer text-base font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+            🎤 Voice Mode
+        </button>
+    </div>
+    
+    <!-- TEXT MODE FORM -->
+    <div id="textMode">
+        <form method="POST" action="/wellness/analyze" class="mt-8">
+            {% for question in questions %}
+            <label for="question_{{ loop.index0 }}" class="block mb-2 font-semibold text-gray-800 text-[15px]">{{ question }}</label>
+            <textarea 
+                id="question_{{ loop.index0 }}" 
+                name="question_{{ loop.index0 }}" 
+                rows="3" 
+                required
+                placeholder="Take your time to reflect..."
+                class="w-full p-4 border-2 border-gray-300 rounded-xl text-base font-inherit mb-6 transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            ></textarea>
+            {% endfor %}
+            
+            <button type="submit" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+                🔍 Analyze My Wellness
+            </button>
+        </form>
+    </div>
+    
+    <!-- VOICE MODE -->
+    <div id="voiceMode" class="hidden">
+        <div class="text-center p-10 bg-gradient-to-r from-primary/10 to-primary-dark/10 rounded-2xl">
+            <h2 id="voiceQuestion" class="text-primary text-2xl font-semibold mb-8">
+                {{ questions[0] }}
+            </h2>
+            
+            <div id="voiceStatus" class="my-8 text-lg text-gray-600">
+                Click the microphone to start speaking
+            </div>
+            
+            <button id="micButton" onclick="toggleRecording()" 
+                    class="w-[120px] h-[120px] rounded-full border-none bg-gradient-to-r from-primary to-primary-dark text-white text-5xl cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95">
+                🎤
+            </button>
+            
+            <div id="transcript" class="mt-8 p-5 bg-white rounded-xl min-h-[100px] text-left hidden">
+                <strong>You said:</strong> <span id="transcriptText"></span>
+            </div>
+            
+            <div id="voiceProgress" class="mt-5 text-primary font-semibold">
+                Question 1 of 4
+            </div>
+            
+            <div id="voiceControls" class="mt-8 hidden">
+                <button onclick="nextQuestion()" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+                    Next Question →
+                </button>
+            </div>
+            
+            <form id="voiceForm" method="POST" action="/wellness/analyze" class="hidden">
+                <input type="hidden" name="question_0" id="voice_q0">
+                <input type="hidden" name="question_1" id="voice_q1">
+                <input type="hidden" name="question_2" id="voice_q2">
+                <input type="hidden" name="question_3" id="voice_q3">
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+// Voice Mode State
+let currentQuestion = 0;
+const questions = {{ questions|tojson }};
+const voiceAnswers = ['', '', '', ''];
+let isRecording = false;
+let recognition = null;
+
+// Initialize Speech Recognition
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('transcriptText').textContent = transcript;
+        document.getElementById('transcript').classList.remove('hidden');
+        voiceAnswers[currentQuestion] = transcript;
+        document.getElementById('voiceControls').classList.remove('hidden');
+        document.getElementById('voiceStatus').textContent = '✅ Got it! Click Next to continue.';
+        isRecording = false;
+        document.getElementById('micButton').textContent = '🎤';
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        document.getElementById('voiceStatus').textContent = '❌ Error: ' + event.error;
+        isRecording = false;
+        document.getElementById('micButton').textContent = '🎤';
+    };
+    
+    recognition.onend = function() {
+        if (isRecording) {
+            document.getElementById('voiceStatus').textContent = 'Listening stopped. Click mic to try again.';
+        }
+        isRecording = false;
+        document.getElementById('micButton').textContent = '🎤';
+    };
+}
+
+// Mode switching
+function showMode(mode) {
+    if (mode === 'text') {
+        document.getElementById('textMode').classList.remove('hidden');
+        document.getElementById('voiceMode').classList.add('hidden');
+        document.getElementById('textBtn').classList.add('active');
+        document.getElementById('voiceBtn').classList.remove('active');
+    } else {
+        document.getElementById('textMode').classList.add('hidden');
+        document.getElementById('voiceMode').classList.remove('hidden');
+        document.getElementById('textBtn').classList.remove('active');
+        document.getElementById('voiceBtn').classList.add('active');
+    }
+}
+
+// Toggle recording
+function toggleRecording() {
+    if (!recognition) {
+        alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+        return;
+    }
+    
+    if (isRecording) {
+        recognition.stop();
+        isRecording = false;
+        document.getElementById('micButton').textContent = '🎤';
+        document.getElementById('voiceStatus').textContent = 'Stopped recording';
+    } else {
+        isRecording = true;
+        document.getElementById('micButton').textContent = '🔴';
+        document.getElementById('voiceStatus').textContent = '🎤 Listening... Speak now!';
+        document.getElementById('transcript').classList.add('hidden');
+        document.getElementById('voiceControls').classList.add('hidden');
+        recognition.start();
+    }
+}
+
+// Next question
+function nextQuestion() {
+    currentQuestion++;
+    
+    if (currentQuestion >= questions.length) {
+        // All questions answered - submit
+        document.getElementById('voice_q0').value = voiceAnswers[0];
+        document.getElementById('voice_q1').value = voiceAnswers[1];
+        document.getElementById('voice_q2').value = voiceAnswers[2];
+        document.getElementById('voice_q3').value = voiceAnswers[3];
+        document.getElementById('voiceForm').submit();
+        return;
+    }
+    
+    // Show next question
+    document.getElementById('voiceQuestion').textContent = questions[currentQuestion];
+    document.getElementById('voiceProgress').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+    document.getElementById('transcript').classList.add('hidden');
+    document.getElementById('voiceControls').classList.add('hidden');
+    document.getElementById('voiceStatus').textContent = 'Click the microphone to answer';
+}
+</script>
+
+<style>
+.mode-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+}
+</style>
+{% endblock %}

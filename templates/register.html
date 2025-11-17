@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Create Your Profile{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-2xl max-w-4xl mx-auto overflow-hidden">
+    <!-- Header Section -->
+    <div class="bg-gradient-to-r from-primary via-primary-dark to-[#764ba2] text-white p-12 text-center">
+        <h1 class="text-5xl font-extrabold mb-4 tracking-tight text-white">Create Your Professional Profile</h1>
+        <p class="text-xl text-white/90 max-w-2xl mx-auto">Tell us about yourself to get personalized job recommendations tailored to your unique profile.</p>
+    </div>
+    
+    <!-- Form Section -->
+    <div class="p-12">
+    
+    <form method="POST" enctype="multipart/form-data" class="mt-8">
+        <label for="name" class="block mb-2 font-semibold text-gray-800 text-[15px]">Full Name:</label>
+        <input type="text" id="name" name="name" required
+               class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+        
+        <label for="email" class="block mb-2 font-semibold text-gray-800 text-[15px]">Email Address:</label>
+        <input type="email" id="email" name="email" required
+               class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+        
+        <label for="skills" class="block mb-2 font-semibold text-gray-800 text-[15px]">Your Skills (comma-separated):</label>
+        <input type="text" id="skills" name="skills" 
+               placeholder="e.g., Python, Machine Learning, React, SQL" required
+               class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+        
+        <label for="education" class="block mb-2 font-semibold text-gray-800 text-[15px]">Education Level:</label>
+        <select id="education" name="education" required
+                class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+            <option value="high_school">High School</option>
+            <option value="bachelors" selected>Bachelor's Degree</option>
+            <option value="masters">Master's Degree</option>
+            <option value="phd">PhD</option>
+        </select>
+        
+        <label for="experience_level" class="block mb-2 font-semibold text-gray-800 text-[15px]">Experience Level:</label>
+        <select id="experience_level" name="experience_level" required
+                class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+            <option value="entry" selected>Entry Level (0-2 years)</option>
+            <option value="mid">Mid Level (3-5 years)</option>
+            <option value="senior">Senior Level (6-10 years)</option>
+            <option value="lead">Lead/Principal (10+ years)</option>
+        </select>
+        
+        <label for="desired_role" class="block mb-2 font-semibold text-gray-800 text-[15px]">Desired Job Role:</label>
+        <input type="text" id="desired_role" name="desired_role" 
+               placeholder="e.g., Software Engineer, Data Scientist, ML Engineer"
+               class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+        
+        <label for="location" class="block mb-2 font-semibold text-gray-800 text-[15px]">Preferred Location:</label>
+        <input type="text" id="location" name="location" 
+               placeholder="e.g., Delhi, Bangalore, Remote" required
+               class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+        
+        <label for="experience" class="block mb-2 font-semibold text-gray-800 text-[15px]">Years of Experience:</label>
+        <input type="number" id="experience" name="experience" min="0" max="50" required
+               class="w-full p-4 mb-6 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+        
+        <label for="resume" class="block mb-2 font-semibold text-gray-800 text-[15px]">Upload Your Resume (PDF):</label>
+        <input type="file" id="resume" name="resume" accept=".pdf" required
+               class="w-full p-4 mb-8 border-2 border-gray-300 rounded-xl text-base transition-all focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+        
+        <button type="submit" class="w-full mt-4 px-9 py-5 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-bold text-lg border-none cursor-pointer transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02] transform">
+            🔍 Find My Perfect Jobs
+        </button>
+    </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Your Job Recommendations{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-2xl max-w-6xl mx-auto overflow-hidden">
+    <!-- Header Section -->
+    <div class="bg-gradient-to-r from-primary via-primary-dark to-[#764ba2] text-white p-12">
+        <h1 class="text-5xl font-extrabold mb-4 tracking-tight">Your Personalized Job Matches</h1>
+        <p class="text-xl text-white/90 mb-2">Hello, <span class="font-bold">{{ user.name }}</span>!</p>
+        <p class="text-lg text-white/80">Based on your profile, here are the best opportunities we found using our AI matching algorithm.</p>
+    </div>
+    
+    <!-- Content Section -->
+    <div class="p-12">
+    
+    {% if jobs %}
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 my-8">
+            <div class="bg-gradient-to-br from-primary/10 to-primary-dark/10 p-6 rounded-2xl border-2 border-primary/20 text-center">
+                <span class="text-5xl font-bold text-primary block">{{ jobs|length }}</span>
+                <span class="text-sm text-gray-600 uppercase tracking-wide mt-2 block">Jobs Found</span>
+            </div>
+            <div class="bg-gradient-to-br from-primary/10 to-primary-dark/10 p-6 rounded-2xl border-2 border-primary/20 text-center">
+                <span class="text-5xl font-bold text-primary block">{{ "%.0f"|format(jobs[0].final_score * 100) }}%</span>
+                <span class="text-sm text-gray-600 uppercase tracking-wide mt-2 block">Top Match</span>
+            </div>
+            <div class="bg-gradient-to-br from-primary/10 to-primary-dark/10 p-6 rounded-2xl border-2 border-primary/20 text-center">
+                <span class="text-5xl font-bold text-primary block">{{ "%.0f"|format((jobs|sum(attribute='final_score')/jobs|length) * 100) }}%</span>
+                <span class="text-sm text-gray-600 uppercase tracking-wide mt-2 block">Average Match</span>
+            </div>
+            <div class="bg-gradient-to-br from-primary/10 to-primary-dark/10 p-6 rounded-2xl border-2 border-primary/20 text-center">
+                <span class="text-5xl font-bold text-primary block">{{ jobs|selectattr('final_score', '>', 0.5)|list|length }}</span>
+                <span class="text-sm text-gray-600 uppercase tracking-wide mt-2 block">Strong Matches (>50%)</span>
+            </div>
+        </div>
+
+        <!-- Filter and Sort Controls -->
+        <div class="bg-gray-50 p-5 rounded-2xl my-6 flex gap-4 items-center flex-wrap">
+            <label for="sortBy" class="text-sm font-semibold text-gray-700">Sort by:</label>
+            <select id="sortBy" onchange="sortJobs(this.value)"
+                    class="px-4 py-2 border-2 border-gray-300 rounded-xl text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                <option value="relevance">Relevance (Default)</option>
+                <option value="title">Job Title</option>
+                <option value="company">Company Name</option>
+            </select>
+
+            <label for="filterMatch" class="text-sm font-semibold text-gray-700">Filter:</label>
+            <select id="filterMatch" onchange="filterJobs(this.value)"
+                    class="px-4 py-2 border-2 border-gray-300 rounded-xl text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                <option value="all">All Jobs</option>
+                <option value="high">High Match (>60%)</option>
+                <option value="medium">Medium Match (40-60%)</option>
+                <option value="low">All Matches (>20%)</option>
+            </select>
+
+            <a href="/recommendations/download" download 
+               class="ml-auto px-5 py-2.5 bg-gradient-to-r from-wellness to-[#45a049] text-white border-none rounded-xl text-sm font-semibold cursor-pointer shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 no-underline"
+               title="Download full report with resume improvements">
+                💾 Download Report
+            </a>
+            <button onclick="window.print()" 
+                    class="px-5 py-2.5 ml-2 bg-gray-200 text-gray-700 border-none rounded-xl text-sm font-semibold cursor-pointer hover:bg-gray-300 transition-colors duration-200">
+                📄 Print/Save as PDF
+            </button>
+        </div>
+
+        <h2 class="text-primary-dark text-3xl font-semibold my-8">Top Recommendations</h2>
+        
+        <!-- Job Cards -->
+        <div id="jobContainer">
+            {% for job in jobs %}
+            <div class="job-card bg-white border-2 border-gray-200 p-8 my-6 rounded-2xl transition-all duration-300 hover:border-primary hover:shadow-xl hover:-translate-y-1" 
+                 data-score="{{ job.final_score }}" data-title="{{ job.title }}" data-company="{{ job.company_name }}">
+                <h3 class="text-gray-900 text-2xl mb-4 font-semibold">{{ job.title }}</h3>
+                
+                <div class="flex justify-between flex-wrap mb-5 pb-4 border-b-2 border-gray-100 text-sm text-gray-600">
+                    <span><strong>🏢 Company:</strong> {{ job.company_name }}</span>
+                    <span><strong>📍 Location:</strong> {{ job.location }}</span>
+                </div>
+                
+                <p class="bg-gradient-to-r from-primary/10 to-primary-dark/10 text-primary px-5 py-2.5 rounded-full text-sm font-semibold inline-block mb-5 border-2 border-primary/30">
+                    {{ job.match_reason }}
+                </p>
+
+                <!-- Job Description -->
+                <div class="mb-5">
+                    {% if job.description is iterable and not job.description is string %}
+                        {% for line in job.description[:3] %}
+                            <p class="my-2.5 text-gray-700 leading-relaxed">{{ line }}</p>
+                        {% endfor %}
+                        {% if job.description|length > 3 %}
+                            <p class="text-gray-500 italic">... and more details</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-gray-700 leading-relaxed">{{ job.description[:300] }}...</p>
+                    {% endif %}
+                </div>
+
+                <!-- Detailed Breakdown -->
+                <details class="mt-4">
+                    <summary class="cursor-pointer text-primary font-semibold py-2.5 px-2.5 hover:text-primary-dark">
+                        📊 View Match Breakdown
+                    </summary>
+                    <div class="mt-2.5 p-4 bg-gray-50 rounded-xl">
+                        <p class="mb-2"><strong>Skills Match:</strong> {{ "%.0f"|format(job.get('skill_score', 0) * 100) }}%</p>
+                        <p class="mb-2"><strong>Title Relevance:</strong> {{ "%.0f"|format(job.get('title_score', 0) * 100) }}%</p>
+                        <p class="mb-2"><strong>Experience Match:</strong> {{ "%.0f"|format(job.get('exp_score', 0) * 100) }}%</p>
+                        <p class="mb-2"><strong>Education Match:</strong> {{ "%.0f"|format(job.get('edu_score', 0) * 100) }}%</p>
+                        <p class="mb-2"><strong>Resume Similarity:</strong> {{ "%.0f"|format(job.get('resume_score', 0) * 100) }}%</p>
+                    </div>
+                </details>
+
+                <div class="mt-5 text-right">
+                    {% if job.share_url %}
+                        <a href="{{ job.share_url }}" target="_blank" 
+                           class="inline-block px-7 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl text-sm font-semibold no-underline hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            🚀 View & Apply
+                        </a>
+                    {% elif job.apply_options and job.apply_options|length > 0 %}
+                        <a href="{{ job.apply_options[0].link }}" target="_blank"
+                           class="inline-block px-7 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl text-sm font-semibold no-underline hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            🚀 View & Apply
+                        </a>
+                    {% elif job.related_links and job.related_links|length > 0 %}
+                        <a href="{{ job.related_links[0].link }}" target="_blank"
+                           class="inline-block px-7 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-xl text-sm font-semibold no-underline hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                            🚀 View & Apply
+                        </a>
+                    {% else %}
+                        <span class="text-gray-500">Link not available</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Resume Improvement Suggestions Section -->
+        {% if resume_improvements %}
+        <div class="mt-12 p-8 bg-gradient-to-r from-wellness/10 to-[#45a049]/10 rounded-2xl border-l-[5px] border-wellness">
+            <h2 class="text-wellness text-2xl font-semibold mt-0 mb-4 flex items-center gap-2.5">
+                <span>📝</span>
+                <span>Resume Improvement Suggestions</span>
+            </h2>
+            <div class="bg-white p-6 rounded-xl mt-5 shadow-md whitespace-pre-wrap leading-relaxed text-gray-900 text-[15px] font-sans">
+                {{ resume_improvements|safe }}
+            </div>
+            <div class="mt-5 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg text-sm text-yellow-800">
+                <strong>💡 Tip:</strong> These suggestions are based on analysis of your profile and the top job matches. 
+                Implement these improvements to increase your chances of getting hired!
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-12">
+            <a href="/register" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1">
+                🔄 Search Again with New Profile
+            </a>
+        </div>
+
+    {% else %}
+        <div class="text-center py-16">
+            <h2 class="text-2xl font-semibold mb-5">No jobs found matching your criteria</h2>
+            <p class="my-5 text-gray-700">Try broadening your search by:</p>
+            <ul class="text-left max-w-md mx-auto space-y-2 list-disc pl-6">
+                <li>Adding more skills</li>
+                <li>Changing your location to a larger city</li>
+                <li>Using a more general job title</li>
+            </ul>
+            <br>
+            <a href="/register" class="inline-block px-9 py-4 bg-gradient-to-r from-primary to-primary-dark text-white no-underline rounded-xl font-semibold text-base border-none cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 mt-4">
+                🔄 Try Again
+            </a>
+        </div>
+    {% endif %}
+    </div>
+</div>
+
+<script>
+// JavaScript for filtering and sorting
+function sortJobs(criteria) {
+    const container = document.getElementById('jobContainer');
+    const jobs = Array.from(container.children);
+    
+    jobs.sort((a, b) => {
+        if (criteria === 'relevance') {
+            return parseFloat(b.dataset.score) - parseFloat(a.dataset.score);
+        } else if (criteria === 'title') {
+            return a.dataset.title.localeCompare(b.dataset.title);
+        } else if (criteria === 'company') {
+            return a.dataset.company.localeCompare(b.dataset.company);
+        }
+        return 0;
+    });
+    
+    jobs.forEach(job => container.appendChild(job));
+}
+
+function filterJobs(criteria) {
+    const jobs = document.querySelectorAll('.job-card');
+    
+    jobs.forEach(job => {
+        const score = parseFloat(job.dataset.score);
+        let show = true;
+        
+        if (criteria === 'high') {
+            show = score > 0.6;
+        } else if (criteria === 'medium') {
+            show = score >= 0.4 && score <= 0.6;
+        } else if (criteria === 'low') {
+            show = score > 0.2;
+        }
+        
+        job.style.display = show ? 'block' : 'none';
+    });
+}
+</script>
+
+<style>
+/* Print styles */
+@media print {
+    .navbar, .filter-controls, .apply-button, button { display: none; }
+    .job-card { page-break-inside: avoid; border: 1px solid #ddd; }
+    body { background: white; }
+    .container { box-shadow: none; }
+}
+
+details summary {
+    padding: 10px;
+}
+
+details[open] summary {
+    margin-bottom: 10px;
+}
+</style>
+{% endblock %}

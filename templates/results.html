@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job Recommendations</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Top Recommendations for {{ user.name }}</h1>
+        <p>Based on your profile, here are the jobs that best match your skills.</p>
+        
+        {% if jobs %}
+            {% for job in jobs %}
+            <div class="job-card">
+                <h3>{{ job.title }}</h3>
+                <div class="meta">
+                    <div class="meta-item">
+                        <strong>Company:</strong> {{ job.company_name }}
+                    </div>
+                    <div class="meta-item">
+                        <strong>Location:</strong> {{ job.location }}
+                    </div>
+                </div>
+
+                <p class="match-reason">{{ job.match_reason }}</p>
+
+                <!-- This is the fix for the description text -->
+                <div class="description">
+                    {{ job.description | join('\n') | truncate(300) }}
+                </div>
+
+                <!-- This is the fix for the button -->
+                <div class="apply-button">
+                    <a href="{{ job.job_posting_url or (job.related_links[0].link if job.related_links) or '#' }}" target="_blank">View & Apply</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No jobs found matching your criteria. Try broadening your skills or location.</p>
+        {% endif %}
+        
+        <br><br>
+        <a href="/register">Update Profile & Search Again</a>
+    </div>
+</body>
+</html>

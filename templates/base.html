@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}SymbiONE{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#667eea',
+                            dark: '#764ba2',
+                        },
+                        wellness: '#4caf50',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-gradient-to-br from-[#667eea] via-[#764ba2] to-[#764ba2] min-h-screen p-5">
+    <div class="bg-white/98 backdrop-blur-md px-8 py-4 rounded-2xl mb-8 shadow-2xl border border-white/20 flex justify-between items-center hover:shadow-3xl transition-shadow duration-300">
+        <div class="flex items-center gap-4">
+            <a href="/" class="flex items-center no-underline group">
+                <img src="{{ url_for('static', filename='logo.png') }}" 
+                     alt="SymbiONE Logo" 
+                     class="h-14 w-auto object-contain max-w-[220px] cursor-pointer transition-all duration-300 group-hover:scale-105">
+            </a>
+            <div>
+                <h1 class="m-0 text-white text-3xl font-extrabold tracking-tight">SymbiONE</h1>
+                <span class="text-gray-600 text-sm font-medium">Jobs + Wellness, Powered by AI</span>
+            </div>
+        </div>
+        <div class="flex gap-6 items-center">
+            <a href="/" class="text-primary no-underline font-semibold hover:text-primary-dark transition-colors duration-200 relative group">
+                Home
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/register" class="text-primary no-underline font-semibold hover:text-primary-dark transition-colors duration-200 relative group">
+                Find Jobs
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/wellness" class="text-wellness no-underline font-semibold hover:text-[#45a049] transition-colors duration-200 relative group">
+                Wellness
+                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-wellness group-hover:w-full transition-all duration-300"></span>
+            </a>
+            <a href="/conversation" class="bg-gradient-to-r from-primary-dark to-[#9c27b0] text-white px-5 py-2 rounded-xl font-semibold no-underline hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                💬 AI Chat
+            </a>
+        </div>
+    </div>
+    
+    {% block content %}{% endblock %}
+</body>
+</html>
